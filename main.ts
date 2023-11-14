@@ -1,5 +1,3 @@
-import shlex from "npm:shlex";
-
 const script = (tag: string) => `#!/bin/sh
 # This script installs sunbeam.
 #
@@ -8,14 +6,32 @@ const script = (tag: string) => `#!/bin/sh
 
 set -eu
 
-tag=${shlex.quote(tag)}
-system=$(uname -s | tr '[:upper:]' '[:lower:]')
-arch=$(uname -m)
+platform=''
+case "$(uname -s | tr '[:upper:]' '[:lower:]')" in
+  "linux")
+    case "$(uname -m)" in
+      "arm64"* | "aarch64"* ) platform='linux_arm64' ;;
+      "arm"* | "aarch"*) platform='linux_arm' ;;
+      *"86") platform='linux_386' ;;
+      *"64") platform='linux_amd64' ;;
+    esac
+    ;;
+  "darwin")
+    case "$(uname -m)" in
+      "arm64"* | "aarch64"* ) platform='darwin_arm64' ;;
+      *"64") platform='darwin_amd64' ;;
+    esac
+    ;;
+  *)
+    printf "Platform not supported: %s\n" "$(uname -s)"
+    exit 1
+    ;;
+esac
 
 tempdir=$(mktemp -d)
 trap 'rm -rf $tempdir' EXIT
 
-url="https://github.com/pomdtr/sunbeam/releases/download/\${tag}/sunbeam-\${system}_\${arch}.tar.gz"
+url="https://github.com/pomdtr/sunbeam/releases/download/${tag}/sunbeam-\${platform}.tar.gz"
 printf "↯ Downloading sunbeam from %s\\n" "$url"
 http_code=$(curl -L "$url" -o "$tempdir/sunbeam.tar.gz" -w "%{http_code}")
 if [ "$http_code" -lt 200 ] || [ "$http_code" -gt 299 ]; then
