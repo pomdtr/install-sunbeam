@@ -1,11 +1,7 @@
-# Hono Deno REST API Template
+# Sunbeam Install Script
 
-A template of REST API app using [Hono](https://hono.dev/) framework
+Usage:
 
 ```
-deno run --allow-net main.ts
+curl -sSf https://install-sunbeam.deno.dev | sh
 ```
-
-This starts the server at http://localhost:8000/
-
-Try go to http://localhost:8000/api/Brachiosaurus or http://localhost:8000/api/
