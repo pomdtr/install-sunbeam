@@ -35,12 +35,12 @@ fi
 printf "\\n↯ Done! You can now run sunbeam.\\n"
 `;
 
-const githubToken = Deno.env.get("GITHUB_TOKEN")
-if (!githubToken) {
-  throw new Error("GITHUB_TOKEN environment variable is required")
-}
-
 async function installSunbeam(request: Request): Promise<Response> {
+  const githubToken = Deno.env.get("GITHUB_TOKEN")
+  if (!githubToken) {
+    throw new Error("GITHUB_TOKEN environment variable is required")
+  }
+
   const url = new URL(request.url);
   const params = new URLSearchParams(url.search);
 
